@@ -1,0 +1,71 @@
+{{ register_asset_bundle('app/assets/AppAsset') }}  {# asset root for yii advanced template #}
+{{ void(this.beginPage()) }}
+<!DOCTYPE html>
+<html lang="{{ app.language }}">
+<head>
+    <meta charset="{{ app.charset }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ html.encode(this.title) }}</title>
+    {{ html.csrfMetaTags | raw }}
+    {{ void(this.head) }}
+</head>
+<body>
+{{ void(this.beginBody()) }}
+
+<div class="wrap">
+    {{ nav_bar_begin({
+        'brandLabel': 'My Company',
+        'brandUrl' : app.homeUrl,
+        'options' : {
+            'class' : 'navbar-inverse navbar-fixed-top',
+        }
+    }) }}
+    {% set
+        menuItems =      [
+        {'label' : 'Main', 'url' : ['/site/index']},
+        {'label' : 'About', 'url' : ['/site/about']},
+        {'label' : 'Contact', 'url' : ['/site/contact']},
+    ] %}
+
+    {% if app.user.isGuest == false %}
+        {% set menuItems = menuItems|merge([
+            {
+                'label' : 'Logout (' ~ app.user.identity.username ~ ')',
+                'url' : ['/site/logout'],
+                'linkOptions' : {'data-method' : 'post','class':'btn btn-link'}
+            }
+        ]) %}
+    {% else %}
+        {% set menuItems = menuItems|merge([
+            {'label' : 'Login', 'url' : ['/site/login']},
+        ]) %}
+    {% endif %}
+    {{ nav_widget({
+        'options': {
+            'class': 'navbar-nav navbar-right',
+        },
+        'items': menuItems
+    }) }}
+    {{ nav_bar_end() }}
+
+    <div class="container">
+        {{ use('yii\\widgets\\Breadcrumbs') }}
+        {{ breadcrumbs_widget({
+            'links': this.params['breadcrumbs'],
+        }) }}
+        {{ content|raw }}
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+
+        <p class="pull-right"><?= Yii::powered() ?></p>
+    </div>
+</footer>
+
+{{ void(this.endBody()) }}
+</body>
+</html>
+{{ void(this.endPage()) }}
